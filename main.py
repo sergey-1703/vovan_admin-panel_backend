@@ -15,12 +15,13 @@ def login():
     else:
         abort(401)
 
-@app.route("/set_status)", methods=["PATCH"])
+@app.route("/set_status", methods=["PATCH"])
 @jwt_required()
 def set_status():
     user_id = request.form["user_id"]
     set_ban = request.form["set_ban"] # banned?
     # ban user
+    return "success"
 
 @app.route("/", methods=["GET"])
 def root():
