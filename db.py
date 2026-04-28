@@ -3,7 +3,10 @@ from psycopg import sql
 from pathlib import Path
 conn: psycopg.connection
 cur: psycopg.cursor
-
+HOST = "localhost"
+NAME = "messenger_db"
+USER = "postgres"
+PASSWORD = 1234
 
 def connect():
     global conn, cur
@@ -25,10 +28,12 @@ def switch_to_test_env():
     PASSWORD = 1234
     connect()
 
-switch_to_test_env()
+#switch_to_test_env()
+connect()
 #this is just for me, you can just use connect() with your info like in original file :D
 
 def set_is_banned(user_id, value):
+    global conn, cur
     cur.execute("""SELECT 1 FROM users WHERE id = %s;""", (user_id,))
     if cur.fetchone() != None:
         cur.execute("""SELECT 1
