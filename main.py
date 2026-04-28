@@ -1,6 +1,7 @@
 from flask import Flask, request, abort, jsonify
 from config import get_admin_user, get_admin_password, get_secret_key
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from db import set_is_banned
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = get_secret_key()
@@ -19,13 +20,16 @@ def login():
 @jwt_required()
 def set_status():
     user_id = request.form["user_id"]
-    set_ban = request.form["set_ban"] # banned?
-    # ban user
-    return "success"
+    set_ban = request.form["set_ban"]
+    try:
+        return {"result": set_is_banned(int(user_id), bool(set_ban))}
+    except Exception as e:
+        return {"result": "False" }
+
 
 @app.route("/", methods=["GET"])
 def root():
     return "test"
 
 
-app.run(port=5000)
+app.run(port=6000)
