@@ -49,3 +49,23 @@ def set_is_banned(user_id, value):
 
     else:
         return False
+
+def get_num_of_new_users_by_year(year):
+    global conn, cur
+    cur.execute("""
+            SELECT 
+                EXTRACT(MONTH FROM created_at) AS month,
+                COUNT(id)
+            FROM users
+            WHERE EXTRACT(YEAR FROM created_at) = %s
+            GROUP BY month
+            ORDER BY month
+        """, (year,))
+
+
+    users_per_month = {
+        i: 0  for i in range (1, 13)
+    }
+    for month, num in cur.fetchall():
+        users_per_month[month] = num
+    return users_per_month
