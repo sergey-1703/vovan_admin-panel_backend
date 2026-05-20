@@ -1,7 +1,7 @@
 from flask import Flask, request, abort, jsonify, redirect, url_for
 from config import get_admin_user, get_admin_password, get_secret_key
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, verify_jwt_in_request
-from db import set_is_banned
+from db import set_is_banned, get_num_of_new_users_by_year
 import random
 
 app = Flask(__name__)
@@ -27,8 +27,18 @@ def set_status():
     try:
         result = set_is_banned(user_id, set_ban)
         return {"result": result}
-    except Exception:
-        return {"result": "False" }
+    except Exception as e:
+        abort(502, description=f"Something went wrong: {e}")
+
+
+@app.route("/statistics", methods=["GET"])
+@jwt_required()
+def get_statistics():
+    year = request.args.get("year")
+    try:
+        return get_num_of_new_users_by_year(int(year))
+    except Exception as e:
+        abort(502, description=f"Something went wrong: {e}")
 
 
 @app.route("/", methods=["GET"])
